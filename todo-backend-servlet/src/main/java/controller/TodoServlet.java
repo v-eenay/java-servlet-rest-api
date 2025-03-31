@@ -38,8 +38,9 @@ public class TodoServlet extends HttpServlet {
             response.getWriter().write(jsonResponse);
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.setContentType("application/json");
             response.getWriter().write("{\"message\": \"Internal Server Error: " + e.getMessage() + "\"}");
-            e.printStackTrace();  // Log the exception
+            e.printStackTrace();
         }
     }
 
@@ -48,6 +49,7 @@ public class TodoServlet extends HttpServlet {
         response.setHeader("Access-Control-Allow-Origin", "*");
         response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
         response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+        response.setContentType("application/json");
 
         try {
             request.setCharacterEncoding("UTF-8");
@@ -64,7 +66,7 @@ public class TodoServlet extends HttpServlet {
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().write("{\"message\": \"Internal Server Error: " + e.getMessage() + "\"}");
-            e.printStackTrace();  // Log the exception
+            e.printStackTrace();
         }
     }
 
@@ -73,6 +75,7 @@ public class TodoServlet extends HttpServlet {
         response.setHeader("Access-Control-Allow-Origin", "*");
         response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
         response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+        response.setContentType("application/json");
 
         try {
             request.setCharacterEncoding("UTF-8");
@@ -89,7 +92,7 @@ public class TodoServlet extends HttpServlet {
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().write("{\"message\": \"Internal Server Error: " + e.getMessage() + "\"}");
-            e.printStackTrace();  // Log the exception
+            e.printStackTrace();
         }
     }
 
@@ -98,6 +101,7 @@ public class TodoServlet extends HttpServlet {
         response.setHeader("Access-Control-Allow-Origin", "*");
         response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
         response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+        response.setContentType("application/json");
 
         try {
             int id = Integer.parseInt(request.getParameter("id"));
@@ -113,7 +117,7 @@ public class TodoServlet extends HttpServlet {
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().write("{\"message\": \"Internal Server Error: " + e.getMessage() + "\"}");
-            e.printStackTrace();  // Log the exception
+            e.printStackTrace();
         }
     }
 
@@ -122,6 +126,7 @@ public class TodoServlet extends HttpServlet {
         response.setHeader("Access-Control-Allow-Origin", "*");
         response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
         response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+        response.setContentType("application/json");
 
         try {
             int id = Integer.parseInt(request.getParameter("id"));
@@ -137,7 +142,7 @@ public class TodoServlet extends HttpServlet {
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().write("{\"message\": \"Internal Server Error: " + e.getMessage() + "\"}");
-            e.printStackTrace();  // Log the exception
+            e.printStackTrace();
         }
     }
 }

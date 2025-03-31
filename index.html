@@ -11,6 +11,10 @@
     <div class="bg-white shadow-lg rounded-xl w-11/12 max-w-4xl p-8 transition-all duration-300">
         <h1 class="text-center text-gray-800 font-semibold mb-8 text-4xl">Todo List</h1>
         <button class="bg-blue-600 text-white px-6 py-3 rounded-lg cursor-pointer transition-all duration-300 font-semibold tracking-wide hover:bg-blue-700 hover:-translate-y-0.5 hover:shadow-lg" onclick="openModal()">Add Todo</button>
+        <div id="loadingIndicator" class="hidden text-center p-4">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-600"></div>
+            <span class="ml-2">Loading...</span>
+        </div>
         <div id="errorMessage" class="hidden bg-red-100 text-red-700 p-3 rounded-lg m-3"></div>
         <div id="emptyState" class="hidden text-center p-10 text-gray-500 text-lg bg-gray-50 rounded-lg m-5">No todos yet! Click the "Add Todo" button to create your first task.</div>
         <table id="todoTable" class="w-full mb-8 rounded-lg overflow-hidden divide-y divide-gray-200">
@@ -32,9 +36,6 @@
             <h2 class="text-gray-800 font-semibold text-2xl mb-4">Add Todo</h2>
             <div id="modalError" class="hidden bg-red-100 text-red-700 p-3 rounded-lg mb-4"></div>
 
-
-
-
             <div class="mb-4">
                 <label for="title" class="block text-gray-700 text-sm font-bold mb-2">Title</label>
                 <input type="text" id="title" placeholder="Enter title" class="w-full p-3 rounded-lg border-2 border-gray-200 focus:border-blue-600 focus:outline-none transition-colors duration-300 text-base" required>
@@ -51,14 +52,25 @@
                 <label for="dueDate" class="block text-gray-700 text-sm font-bold mb-2">Due Date</label>
                 <input type="date" id="dueDate" class="w-full p-3 rounded-lg border-2 border-gray-200 focus:border-blue-600 focus:outline-none transition-colors duration-300 text-base" required>
             </div>
-            <button class="bg-blue-600 text-white px-6 py-3 rounded-lg cursor-pointer transition-all duration-300 font-semibold tracking-wide hover:bg-blue-700 hover:-translate-y-0.5 hover:shadow-lg" onclick="submitTodo()">Add Todo</button>
-            <button class="bg-gray-500 text-white px-6 py-3 rounded-lg cursor-pointer transition-all duration-300 font-semibold tracking-wide hover:bg-gray-600 hover:-translate-y-0.5 hover:shadow-lg" onclick="closeModal()">Cancel</button>
+            <div class="flex gap-2">
+                <button class="bg-blue-600 text-white px-6 py-3 rounded-lg cursor-pointer transition-all duration-300 font-semibold tracking-wide hover:bg-blue-700 hover:-translate-y-0.5 hover:shadow-lg" onclick="submitTodo()">Add Todo</button>
+                <button class="bg-gray-500 text-white px-6 py-3 rounded-lg cursor-pointer transition-all duration-300 font-semibold tracking-wide hover:bg-gray-600 hover:-translate-y-0.5 hover:shadow-lg" onclick="closeModal()">Cancel</button>
+            </div>
         </div>
     </div>
     <script>
         const apiUrl = 'http://localhost:8080/todo_backend_servlet_war_exploded/api/todos';
-
+    
+        // Show loading indicator during fetching
+        function showLoading(isLoading) {
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            if (loadingIndicator) {
+                loadingIndicator.style.display = isLoading ? 'block' : 'none';
+            }
+        }
+    
         async function fetchTodos() {
+            showLoading(true);
             try {
                 const response = await fetch(apiUrl);
                 if (!response.ok) throw new Error('Failed to fetch todos');
@@ -67,23 +79,25 @@
             } catch (error) {
                 showError('Failed to load todos. Please try again later.');
                 console.error('Error fetching todos:', error);
+            } finally {
+                showLoading(false);
             }
         }
-
+    
         function populateTable(todos) {
             const tbody = document.getElementById('todoTableBody');
             const table = document.getElementById('todoTable');
             const emptyState = document.getElementById('emptyState');
-
+    
             if (!todos || todos.length === 0) {
                 table.style.display = 'none';
                 emptyState.style.display = 'block';
                 return;
             }
-
-            table.style.display = 'block';
+    
+            table.style.display = 'table';
             emptyState.style.display = 'none';
-
+    
             tbody.innerHTML = todos.map(todo => `
                 <tr>
                     <td class="p-4 text-sm text-gray-700">${todo.title}</td>
@@ -98,7 +112,7 @@
                 </tr>
             `).join('');
         }
-
+    
         async function toggleTodoStatus(id) {
             try {
                 const response = await fetch(`${apiUrl}?id=${id}`, {
@@ -112,7 +126,7 @@
                 console.error('Error toggling status:', error);
             }
         }
-
+    
         async function deleteTodo(id) {
             try {
                 const response = await fetch(`${apiUrl}?id=${id}`, {
@@ -125,34 +139,35 @@
                 console.error('Error deleting todo:', error);
             }
         }
-
+    
         function openModal() {
             document.getElementById('todoModal').classList.remove('hidden');
         }
-
+    
         function closeModal() {
             document.getElementById('todoModal').classList.add('hidden');
             clearModalFields();
         }
-
+    
         function clearModalFields() {
             document.getElementById('title').value = '';
             document.getElementById('description').value = '';
             document.getElementById('priority').value = '';
             document.getElementById('dueDate').value = '';
+            hideModalError();
         }
-
+    
         async function submitTodo() {
             const title = document.getElementById('title').value;
             const description = document.getElementById('description').value;
             const priority = document.getElementById('priority').value;
             const dueDate = document.getElementById('dueDate').value;
-
+    
             if (!title || !description || !priority || !dueDate) {
                 showModalError('All fields are required!');
                 return;
             }
-
+    
             try {
                 const response = await fetch(apiUrl, {
                     method: 'POST',
@@ -167,20 +182,25 @@
                 console.error('Error submitting todo:', error);
             }
         }
-
+    
         function showModalError(message) {
             const modalError = document.getElementById('modalError');
             modalError.textContent = message;
             modalError.classList.remove('hidden');
         }
-
+    
+        function hideModalError() {
+            const modalError = document.getElementById('modalError');
+            modalError.classList.add('hidden');
+        }
+    
         function showError(message) {
             const errorMessage = document.getElementById('errorMessage');
             errorMessage.textContent = message;
             errorMessage.classList.remove('hidden');
         }
-
+    
         window.onload = fetchTodos;
-    </script>
+    </script>    
 </body>
 </html>
