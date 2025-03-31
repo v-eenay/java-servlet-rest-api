@@ -61,7 +61,7 @@
                 <input type="date" id="dueDate" class="w-full p-4 rounded-lg border-2 border-gray-200 focus:border-blue-600 focus:outline-none transition-colors duration-300 text-base shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
             </div>
             <div class="flex gap-4">
-                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-6 py-4 rounded-lg cursor-pointer transition duration-150 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" onclick="submitTodo()">Add Todo</button>
+                <button id="submitButton" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-6 py-4 rounded-lg cursor-pointer transition duration-150 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" onclick="submitTodo()">Add Todo</button>
                 <button class="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-6 py-4 rounded-lg cursor-pointer transition duration-150 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2" onclick="closeModal()">Cancel</button>
             </div>
         </div>
@@ -83,6 +83,7 @@
                 const response = await fetch(apiUrl);
                 if (!response.ok) throw new Error('Failed to fetch todos');
                 const todos = await response.json();
+                console.log('Fetched todos:', todos); // Log to debug status values
                 populateTable(todos);
             } catch (error) {
                 showError('Failed to load todos. Please try again later.');
@@ -105,14 +106,14 @@
 
             table.style.display = 'table';
             emptyState.style.display = 'none';
-
+            console.log('Populating table with todos:', todos); // Log to debug status values
             tbody.innerHTML = todos.map(todo => `
                 <tr class="even:bg-gray-50">
                     <td class="px-4 py-3 text-base text-gray-700">${todo.title}</td>
                     <td class="px-4 py-3 text-base text-gray-700">${todo.description}</td>
                     <td class="px-4 py-3 text-base text-gray-700">${todo.priority}</td>
                     <td class="px-4 py-3 text-base text-gray-700">${todo.dueDate}</td>
-                    <td class="px-4 py-3 text-base text-gray-700">${todo.status ? 'Completed' : 'Pending'}</td>
+                    <td class="px-4 py-3 text-base text-gray-700">${todo.completed === true ? 'Completed' : 'Pending'}</td>
                     <td class="px-4 py-3 whitespace-nowrap">
                         <button class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-md text-sm mr-2" onclick="toggleTodoStatus(${todo.id})">Toggle Status</button>
                         <button class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm mr-2" onclick="deleteTodo(${todo.id})">Delete</button>
@@ -160,6 +161,7 @@
                 document.getElementById('priority').value = todo.priority;
                 document.getElementById('dueDate').value = todo.dueDate;
                 document.getElementById('modalTitle').textContent = 'Edit Todo';
+                document.getElementById('submitButton').textContent = 'Update Todo'; // Fix button text for update
                 openModal();
             } catch (error) {
                 showError('Failed to load todo for editing. Please try again later.');
@@ -185,6 +187,7 @@
             document.getElementById('priority').value = 'Low';
             document.getElementById('dueDate').value = '';
             document.getElementById('modalTitle').textContent = 'Add Todo';
+            document.getElementById('submitButton').textContent = 'Add Todo'; // Reset button text for add
             hideModalError();
         }
 

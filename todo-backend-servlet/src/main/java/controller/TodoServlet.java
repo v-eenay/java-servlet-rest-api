@@ -49,6 +49,7 @@ public class TodoServlet extends HttpServlet {
                 int id = Integer.parseInt(idParam);
                 Todo todo = TodoDAO.getTodoById(id);
                 String jsonResponse = gson.toJson(todo);
+                System.out.println(jsonResponse);
                 response.setContentType("application/json");
                 response.getWriter().write(jsonResponse);
             } else {
