@@ -20,7 +20,7 @@ public class TodoServlet extends HttpServlet {
     @Override
     protected void doOptions(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
         response.setHeader("Access-Control-Allow-Headers", "Content-Type");
         response.setStatus(HttpServletResponse.SC_OK);
     }
@@ -28,7 +28,7 @@ public class TodoServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
         response.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
         try {
@@ -39,13 +39,14 @@ public class TodoServlet extends HttpServlet {
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().write("{\"message\": \"Internal Server Error: " + e.getMessage() + "\"}");
+            e.printStackTrace();  // Log the exception
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
         response.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
         try {
@@ -63,13 +64,14 @@ public class TodoServlet extends HttpServlet {
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().write("{\"message\": \"Internal Server Error: " + e.getMessage() + "\"}");
+            e.printStackTrace();  // Log the exception
         }
     }
 
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
         response.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
         try {
@@ -87,13 +89,14 @@ public class TodoServlet extends HttpServlet {
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().write("{\"message\": \"Internal Server Error: " + e.getMessage() + "\"}");
+            e.printStackTrace();  // Log the exception
         }
     }
 
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
         response.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
         try {
@@ -110,13 +113,14 @@ public class TodoServlet extends HttpServlet {
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().write("{\"message\": \"Internal Server Error: " + e.getMessage() + "\"}");
+            e.printStackTrace();  // Log the exception
         }
     }
 
     @Override
     protected void doPatch(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
         response.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
         try {
@@ -133,6 +137,7 @@ public class TodoServlet extends HttpServlet {
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().write("{\"message\": \"Internal Server Error: " + e.getMessage() + "\"}");
+            e.printStackTrace();  // Log the exception
         }
     }
 }
