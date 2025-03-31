@@ -2,59 +2,30 @@
 <html>
 <head>
   <title>Server Started Successfully</title>
+  <!-- Include Poppins font from Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <!-- Include Tailwind CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      background: linear-gradient(45deg, #1a1a2e, #16213e);
-      font-family: 'Arial', sans-serif;
-    }
-
-    .container {
-      text-align: center;
-      padding: 40px;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 20px;
-      box-shadow: 0 0 30px rgba(0, 255, 152, 0.2);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    h1 {
-      color: #00ff98;
-      font-size: 48px;
-      margin: 0;
-      text-transform: uppercase;
-      letter-spacing: 2px;
+    /* Custom animations */
+    .animate-glow {
       animation: glow 2s ease-in-out infinite alternate;
     }
 
-    .success-icon {
-      font-size: 100px;
-      color: #00ff98;
-      margin-bottom: 20px;
+    .animate-bounce {
       animation: bounce 1.5s infinite;
     }
 
-    .status-text {
-      color: #ffffff;
-      font-size: 24px;
-      margin-top: 20px;
-      opacity: 0;
+    .animate-fadeIn {
       animation: fadeIn 1s ease-in 0.5s forwards;
     }
 
-    /* Animations */
     @keyframes glow {
       from {
-        text-shadow: 0 0 10px #00ff98, 0 0 20px #00ff98, 0 0 30px #00ff98;
+        text-shadow: 0 0 10px #60a5fa, 0 0 20px #60a5fa, 0 0 30px #60a5fa;
       }
       to {
-        text-shadow: 0 0 20px #00ff98, 0 0 30px #00ff98, 0 0 40px #00ff98;
+        text-shadow: 0 0 20px #60a5fa, 0 0 30px #60a5fa, 0 0 40px #60a5fa;
       }
     }
 
@@ -81,7 +52,7 @@
       }
     }
 
-    /* Particle Background */
+    /* Particle styles */
     .particles {
       position: fixed;
       top: 0;
@@ -94,7 +65,7 @@
 
     .particle {
       position: absolute;
-      background: #00ff98;
+      background: #60a5fa; /* Light blue to match Tailwind's blue palette */
       border-radius: 50%;
       opacity: 0.3;
       animation: float 15s infinite;
@@ -111,13 +82,18 @@
     }
   </style>
 </head>
-<body>
-<div class="container">
-  <div class="success-icon">✓</div>
-  <h1>Server Started Successfully</h1>
-  <div class="status-text">System is now operational</div>
+<body class="font-poppins bg-gray-50 flex justify-center items-center min-h-screen p-5">
+<!-- Container with Tailwind styling -->
+<div class="bg-white shadow-md rounded-lg p-8 max-w-md w-full text-center">
+  <!-- Success icon -->
+  <div class="text-green-500 text-8xl mb-4 animate-bounce">✓</div>
+  <!-- Heading -->
+  <h1 class="text-gray-800 font-semibold text-4xl mb-4 animate-glow">Server Started Successfully</h1>
+  <!-- Status text -->
+  <div class="text-gray-600 text-xl animate-fadeIn">System is now operational</div>
 </div>
 
+<!-- Particle background -->
 <div class="particles">
   <% for(int i = 0; i < 20; i++) { %>
   <div class="particle"
