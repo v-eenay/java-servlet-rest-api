@@ -7,68 +7,76 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="font-poppins bg-gradient-to-br from-gray-100 to-blue-200 flex justify-center items-center min-h-screen p-5">
-    <div class="bg-white shadow-lg rounded-xl w-11/12 max-w-4xl p-8 transition-all duration-300">
-        <h1 class="text-center text-gray-800 font-semibold mb-8 text-4xl">Todo List</h1>
-        <button class="bg-blue-600 text-white px-6 py-3 rounded-lg cursor-pointer transition-all duration-300 font-semibold tracking-wide hover:bg-blue-700 hover:-translate-y-0.5 hover:shadow-lg" onclick="openModal()">Add Todo</button>
-        <div id="loadingIndicator" class="hidden text-center p-4">
-            <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-600"></div>
-            <span class="ml-2">Loading...</span>
+<body class="font-poppins bg-gray-50 flex justify-center items-center min-h-screen p-5">
+    <div class="bg-white shadow-md rounded-lg p-8 max-w-4xl w-full">
+        <h1 class="text-center text-gray-800 font-semibold mb-12 text-4xl">Todo List</h1>
+        <button class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md cursor-pointer transition duration-150 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mb-8" onclick="openModal()">Add Todo</button>
+        <div id="loadingIndicator" class="hidden text-center p-6 mb-8">
+            <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-blue-200 border-t-blue-600"></div>
+            <span class="ml-3 text-lg text-gray-700">Loading...</span>
         </div>
-        <div id="errorMessage" class="hidden bg-red-100 text-red-700 p-3 rounded-lg m-3"></div>
-        <div id="emptyState" class="hidden text-center p-10 text-gray-500 text-lg bg-gray-50 rounded-lg m-5">No todos yet! Click the "Add Todo" button to create your first task.</div>
-        <table id="todoTable" class="w-full mb-8 rounded-lg overflow-hidden divide-y divide-gray-200">
-            <thead>
-                <tr>
-                    <th class="p-4 text-left bg-blue-600 text-white font-semibold uppercase text-sm">Title</th>
-                    <th class="p-4 text-left bg-blue-600 text-white font-semibold uppercase text-sm">Description</th>
-                    <th class="p-4 text-left bg-blue-600 text-white font-semibold uppercase text-sm">Priority</th>
-                    <th class="p-4 text-left bg-blue-600 text-white font-semibold uppercase text-sm">Due Date</th>
-                    <th class="p-4 text-left bg-blue-600 text-white font-semibold uppercase text-sm">Status</th>
-                    <th class="p-4 text-left bg-blue-600 text-white font-semibold uppercase text-sm">Actions</th>
-                </tr>
-            </thead>
-            <tbody id="todoTableBody"></tbody>
-        </table>
+        <div id="errorMessage" class="hidden bg-red-50 text-red-700 p-4 rounded-md mb-8"></div>
+        <div id="emptyState" class="hidden text-center p-12 text-gray-500 bg-gray-50 rounded-lg mb-8">
+            <p class="text-xl font-medium">No todos yet!</p>
+            <p class="mt-2">Click the "Add Todo" button to create your first task.</p>
+        </div>
+        <div class="overflow-x-auto mb-10">
+            <table id="todoTable" class="min-w-full divide-y divide-gray-200">
+                <thead>
+                    <tr>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider bg-blue-700">Title</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider bg-blue-700">Description</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider bg-blue-700">Priority</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider bg-blue-700">Due Date</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider bg-blue-700">Status</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider bg-blue-700">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="todoTableBody" class="divide-y divide-gray-200"></tbody>
+            </table>
+        </div>
     </div>
-    <div id="todoModal" class="hidden fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-60">
-        <div class="bg-white rounded-xl p-8 w-96 shadow-2xl">
-            <h2 class="text-gray-800 font-semibold text-2xl mb-4">Add Todo</h2>
-            <div id="modalError" class="hidden bg-red-100 text-red-700 p-3 rounded-lg mb-4"></div>
-
-            <div class="mb-4">
-                <label for="title" class="block text-gray-700 text-sm font-bold mb-2">Title</label>
-                <input type="text" id="title" placeholder="Enter title" class="w-full p-3 rounded-lg border-2 border-gray-200 focus:border-blue-600 focus:outline-none transition-colors duration-300 text-base" required>
+    <div id="todoModal" class="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50 transition-opacity duration-300 opacity-0 pointer-events-none">
+        <div class="bg-white rounded-xl p-6 sm:p-8 w-full max-w-md shadow-2xl">
+            <h2 class="text-gray-800 font-semibold text-2xl mb-6" id="modalTitle">Add Todo</h2>
+            <div id="modalError" class="hidden bg-red-50 text-red-700 p-4 rounded-md mb-6"></div>
+            <div class="mb-6">
+                <label for="title" class="block text-gray-700 text-sm font-bold mb-3">Title</label>
+                <input type="text" id="title" placeholder="Enter title" class="w-full p-4 rounded-lg border-2 border-gray-200 focus:border-blue-600 focus:outline-none transition-colors duration-300 text-base shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
             </div>
-            <div class="mb-4">
-                <label for="description" class="block text-gray-700 text-sm font-bold mb-2">Description</label>
-                <input type="text" id="description" placeholder="Enter description" class="w-full p-3 rounded-lg border-2 border-gray-200 focus:border-blue-600 focus:outline-none transition-colors duration-300 text-base" required>
+            <div class="mb-6">
+                <label for="description" class="block text-gray-700 text-sm font-bold mb-3">Description</label>
+                <input type="text" id="description" placeholder="Enter description" class="w-full p-4 rounded-lg border-2 border-gray-200 focus:border-blue-600 focus:outline-none transition-colors duration-300 text-base shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
             </div>
-            <div class="mb-4">
-                <label for="priority" class="block text-gray-700 text-sm font-bold mb-2">Priority</label>
-                <input type="text" id="priority" placeholder="Enter priority (e.g., High)" class="w-full p-3 rounded-lg border-2 border-gray-200 focus:border-blue-600 focus:outline-none transition-colors duration-300 text-base" required>
+            <div class="mb-6">
+                <label for="priority" class="block text-gray-700 text-sm font-bold mb-3">Priority</label>
+                <select id="priority" class="w-full p-4 rounded-lg border-2 border-gray-200 focus:border-blue-600 focus:outline-none transition-colors duration-300 text-base shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                    <option value="Low">Low</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
+                </select>
             </div>
-            <div class="mb-4">
-                <label for="dueDate" class="block text-gray-700 text-sm font-bold mb-2">Due Date</label>
-                <input type="date" id="dueDate" class="w-full p-3 rounded-lg border-2 border-gray-200 focus:border-blue-600 focus:outline-none transition-colors duration-300 text-base" required>
+            <div class="mb-8">
+                <label for="dueDate" class="block text-gray-700 text-sm font-bold mb-3">Due Date</label>
+                <input type="date" id="dueDate" class="w-full p-4 rounded-lg border-2 border-gray-200 focus:border-blue-600 focus:outline-none transition-colors duration-300 text-base shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
             </div>
-            <div class="flex gap-2">
-                <button class="bg-blue-600 text-white px-6 py-3 rounded-lg cursor-pointer transition-all duration-300 font-semibold tracking-wide hover:bg-blue-700 hover:-translate-y-0.5 hover:shadow-lg" onclick="submitTodo()">Add Todo</button>
-                <button class="bg-gray-500 text-white px-6 py-3 rounded-lg cursor-pointer transition-all duration-300 font-semibold tracking-wide hover:bg-gray-600 hover:-translate-y-0.5 hover:shadow-lg" onclick="closeModal()">Cancel</button>
+            <div class="flex gap-4">
+                <button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-6 py-4 rounded-lg cursor-pointer transition duration-150 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" onclick="submitTodo()">Add Todo</button>
+                <button class="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-6 py-4 rounded-lg cursor-pointer transition duration-150 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2" onclick="closeModal()">Cancel</button>
             </div>
         </div>
     </div>
     <script>
         const apiUrl = 'http://localhost:8080/todo_backend_servlet_war_exploded/api/todos';
-    
-        // Show loading indicator during fetching
+        let currentTodoId = null;
+
         function showLoading(isLoading) {
             const loadingIndicator = document.getElementById('loadingIndicator');
             if (loadingIndicator) {
                 loadingIndicator.style.display = isLoading ? 'block' : 'none';
             }
         }
-    
+
         async function fetchTodos() {
             showLoading(true);
             try {
@@ -83,36 +91,37 @@
                 showLoading(false);
             }
         }
-    
+
         function populateTable(todos) {
             const tbody = document.getElementById('todoTableBody');
             const table = document.getElementById('todoTable');
             const emptyState = document.getElementById('emptyState');
-    
+
             if (!todos || todos.length === 0) {
                 table.style.display = 'none';
                 emptyState.style.display = 'block';
                 return;
             }
-    
+
             table.style.display = 'table';
             emptyState.style.display = 'none';
-    
+
             tbody.innerHTML = todos.map(todo => `
-                <tr>
-                    <td class="p-4 text-sm text-gray-700">${todo.title}</td>
-                    <td class="p-4 text-sm text-gray-700">${todo.description}</td>
-                    <td class="p-4 text-sm text-gray-700">${todo.priority}</td>
-                    <td class="p-4 text-sm text-gray-700">${todo.dueDate}</td>
-                    <td class="p-4 text-sm text-gray-700">${todo.status ? 'Completed' : 'Pending'}</td>
-                    <td class="p-4">
-                        <button class="bg-yellow-500 text-white px-4 py-2 rounded-lg" onclick="toggleTodoStatus(${todo.id})">Toggle Status</button>
-                        <button class="bg-red-500 text-white px-4 py-2 rounded-lg" onclick="deleteTodo(${todo.id})">Delete</button>
+                <tr class="even:bg-gray-50">
+                    <td class="px-4 py-3 text-base text-gray-700">${todo.title}</td>
+                    <td class="px-4 py-3 text-base text-gray-700">${todo.description}</td>
+                    <td class="px-4 py-3 text-base text-gray-700">${todo.priority}</td>
+                    <td class="px-4 py-3 text-base text-gray-700">${todo.dueDate}</td>
+                    <td class="px-4 py-3 text-base text-gray-700">${todo.status ? 'Completed' : 'Pending'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap">
+                        <button class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-md text-sm mr-2" onclick="toggleTodoStatus(${todo.id})">Toggle Status</button>
+                        <button class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm mr-2" onclick="deleteTodo(${todo.id})">Delete</button>
+                        <button class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md text-sm" onclick="editTodo(${todo.id})">Edit</button>
                     </td>
                 </tr>
             `).join('');
         }
-    
+
         async function toggleTodoStatus(id) {
             try {
                 const response = await fetch(`${apiUrl}?id=${id}`, {
@@ -126,7 +135,7 @@
                 console.error('Error toggling status:', error);
             }
         }
-    
+
         async function deleteTodo(id) {
             try {
                 const response = await fetch(`${apiUrl}?id=${id}`, {
@@ -139,68 +148,113 @@
                 console.error('Error deleting todo:', error);
             }
         }
-    
-        function openModal() {
-            document.getElementById('todoModal').classList.remove('hidden');
+
+        async function editTodo(id) {
+            try {
+                const response = await fetch(`${apiUrl}?id=${id}`);
+                if (!response.ok) throw new Error('Failed to fetch todo');
+                const todo = await response.json();
+                currentTodoId = todo.id;
+                document.getElementById('title').value = todo.title;
+                document.getElementById('description').value = todo.description;
+                document.getElementById('priority').value = todo.priority;
+                document.getElementById('dueDate').value = todo.dueDate;
+                document.getElementById('modalTitle').textContent = 'Edit Todo';
+                openModal();
+            } catch (error) {
+                showError('Failed to load todo for editing. Please try again later.');
+                console.error('Error fetching todo for editing:', error);
+            }
         }
-    
+
+        function openModal() {
+            const modal = document.getElementById('todoModal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
         function closeModal() {
-            document.getElementById('todoModal').classList.add('hidden');
+            const modal = document.getElementById('todoModal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
             clearModalFields();
         }
-    
+
         function clearModalFields() {
+            currentTodoId = null;
             document.getElementById('title').value = '';
             document.getElementById('description').value = '';
-            document.getElementById('priority').value = '';
+            document.getElementById('priority').value = 'Low';
             document.getElementById('dueDate').value = '';
+            document.getElementById('modalTitle').textContent = 'Add Todo';
             hideModalError();
         }
-    
+
         async function submitTodo() {
             const title = document.getElementById('title').value;
             const description = document.getElementById('description').value;
             const priority = document.getElementById('priority').value;
             const dueDate = document.getElementById('dueDate').value;
-    
+
             if (!title || !description || !priority || !dueDate) {
                 showModalError('All fields are required!');
                 return;
             }
-    
+
+            const todo = {
+                title,
+                description,
+                priority,
+                dueDate,
+                status: false
+            };
+
             try {
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ title, description, priority, dueDate, status: false })
-                });
-                if (!response.ok) throw new Error('Failed to add todo');
+                let response;
+                if (currentTodoId) {
+                    todo.id = currentTodoId;
+                    response = await fetch(`${apiUrl}?id=${currentTodoId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(todo)
+                    });
+                } else {
+                    response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(todo)
+                    });
+                }
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Failed to add/update todo');
+                }
+
                 fetchTodos();
                 closeModal();
             } catch (error) {
-                showModalError('Failed to add Todo. Please try again later.');
+                showModalError('Failed to add/update Todo: ' + error.message);
                 console.error('Error submitting todo:', error);
             }
         }
-    
+
         function showModalError(message) {
             const modalError = document.getElementById('modalError');
             modalError.textContent = message;
             modalError.classList.remove('hidden');
         }
-    
+
         function hideModalError() {
             const modalError = document.getElementById('modalError');
             modalError.classList.add('hidden');
         }
-    
+
         function showError(message) {
             const errorMessage = document.getElementById('errorMessage');
             errorMessage.textContent = message;
             errorMessage.classList.remove('hidden');
         }
-    
+
         window.onload = fetchTodos;
-    </script>    
+    </script>
 </body>
 </html>

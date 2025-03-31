@@ -69,7 +69,31 @@ public class TodoDAO {
         }
         return todos;
     }
-
+    public static Todo getTodoById(int id) {
+        String query = "SELECT * FROM todos WHERE id=?";
+        try(Connection conn = getConnection();){
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()) {
+                Todo todo = new Todo(
+                        rs.getInt("id"),
+                        rs.getString("title"),
+                        rs.getString("description"),
+                        rs.getString("priority"),
+                        rs.getDate("due_date"),
+                        rs.getBoolean("completed"),
+                        rs.getTimestamp("created_at"),
+                        rs.getTimestamp("updated_at")
+                );
+                return todo;
+            }
+        }
+        catch(SQLException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
     // UPDATE: Modify an existing Todo
     public static boolean updateTodo(Todo todo) {
         String query = "UPDATE todos SET title = ?, description = ?, priority = ?, due_date = ?, completed = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?";
@@ -110,22 +134,28 @@ public class TodoDAO {
     // MARK TODO as completed or pending (Toggle Status)
     public static boolean toggleStatus(int id) {
         String query = "UPDATE todos SET completed = NOT completed WHERE id = ?";
+        String query1 = "select completed from todos where id = ?";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setInt(1, id);
-
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        try(Connection conn = getConnection()){
+            PreparedStatement statement = conn.prepareStatement(query1);
+            statement.setInt(1, id);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                System.out.println(rs.getString("completed"));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         return false;
     }
 
-    public static void main(String[] args) {
-        Todo todo = new Todo("This is a title","This is a description","High",Date.valueOf("2025-04-01"),false);
-       boolean added = TodoDAO.addTodo(todo);
-       System.out.println(added);
-    }
+
 }

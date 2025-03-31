@@ -1,6 +1,8 @@
 package controller;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -10,12 +12,22 @@ import model.Todo;
 import model.TodoDAO;
 
 import java.io.IOException;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 @WebServlet("/api/todos")
 public class TodoServlet extends HttpServlet {
 
-    private static final Gson gson = new Gson();
+    private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Date.class, (JsonDeserializer<Date>) (json, typeOfT, context) -> {
+                try {
+                    return new Date(new SimpleDateFormat("yyyy-MM-dd").parse(json.getAsString()).getTime());
+                } catch (Exception e) {
+                    return null;
+                }
+            })
+            .create();
 
     @Override
     protected void doOptions(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -32,10 +44,19 @@ public class TodoServlet extends HttpServlet {
         response.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
         try {
-            List<Todo> todos = TodoDAO.getAllTodos();
-            String jsonResponse = gson.toJson(todos);
-            response.setContentType("application/json");
-            response.getWriter().write(jsonResponse);
+            String idParam = request.getParameter("id");
+            if (idParam != null) {
+                int id = Integer.parseInt(idParam);
+                Todo todo = TodoDAO.getTodoById(id);
+                String jsonResponse = gson.toJson(todo);
+                response.setContentType("application/json");
+                response.getWriter().write(jsonResponse);
+            } else {
+                List<Todo> todos = TodoDAO.getAllTodos();
+                String jsonResponse = gson.toJson(todos);
+                response.setContentType("application/json");
+                response.getWriter().write(jsonResponse);
+            }
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.setContentType("application/json");
