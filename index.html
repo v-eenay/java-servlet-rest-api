@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo App</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            border-radius: 12px;
+            width: 90%;
+            max-width: 1000px;
+            padding: 30px;
+            transition: all 0.3s ease;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2d3748;
+            font-weight: 600;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border: none;
+        }
+
+        th {
+            background-color: #5e72e4;
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9em;
+        }
+
+        td {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        tr:hover td {
+            background-color: #f1f3f9;
+        }
+
+        .btn {
+            background-color: #5e72e4;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .btn:hover {
+            background-color: #4b60d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(94, 114, 228, 0.3);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s;
+            -webkit-backdrop-filter: blur(4px);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: 12px;
+            padding: 30px;
+            width: 450px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-content input {
+            width: 100%;
+            padding: 12px;
+            margin: 12px 0;
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+            transition: border-color 0.3s ease;
+            font-size: 1em;
+        }
+
+        .modal-content input:focus {
+            outline: none;
+            border-color: #5e72e4;
+        }
+
+        .modal-content button {
+            margin-top: 10px;
+        }
+
+        .error-message {
+            background-color: #fee2e2;
+            color: #dc2626;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            display: none;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #6b7280;
+            font-size: 1.1em;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            margin: 20px 0;
+            display: none;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(-10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade {
+            animation: fadeIn 0.3s ease;
+        }
+    </style>
+</head>
+</head>
+<body>
+    <div class="container">
+        <h1>Todo List</h1>
+        <button class="btn" onclick="openModal()">Add Todo</button>
+        <div id="errorMessage" class="error-message"></div>
+        <div id="emptyState" class="empty-state">
+            No todos yet! Click the "Add Todo" button to create your first task.
+        </div>
+        <table id="todoTable">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Priority</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="todoTableBody"></tbody>
+        </table>
+    </div>
+
+    <div id="todoModal" class="modal">
+        <div class="modal-content">
+            <h2>Add Todo</h2>
+            <div id="modalError" class="error-message"></div>
+            <input type="text" id="title" placeholder="Title" required>
+            <input type="text" id="description" placeholder="Description" required>
+            <input type="text" id="priority" placeholder="Priority (e.g., High)" required>
+            <input type="date" id="dueDate" required>
+            <button class="btn" onclick="submitTodo()">Add Todo</button>
+            <button class="btn" style="background-color: #cbd5e1;" onclick="closeModal()">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        const apiUrl = 'http://localhost:8080/todo_backend_servlet_war_exploded/api/todos';
+
+        async function fetchTodos() {
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) throw new Error('Failed to fetch todos');
+                const todos = await response.json();
+                populateTable(todos);
+            } catch (error) {
+                showError('Failed to load todos. Please try again later.');
+                console.error('Error fetching todos:', error);
+            }
+        }
+
+        function populateTable(todos) {
+            const tbody = document.getElementById('todoTableBody');
+            const table = document.getElementById('todoTable');
+            const emptyState = document.getElementById('emptyState');
+
+            if (!todos || todos.length === 0) {
+                table.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            table.style.display = 'table';
+            emptyState.style.display = 'none';
+            tbody.innerHTML = '';
+            
+            todos.forEach(todo => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${escapeHtml(todo.title)}</td>
+                    <td>${escapeHtml(todo.description)}</td>
+                    <td>${escapeHtml(todo.priority)}</td>
+                    <td>${formatDate(todo.dueDate)}</td>
+                    <td>${todo.completed ? 'Completed' : 'Pending'}</td>
+                    <td>
+                        <button class="btn" onclick="toggleStatus(${todo.id})">${todo.completed ? 'Mark Pending' : 'Mark Completed'}</button>
+                        <button class="btn" style="background-color: #ef4444;" onclick="deleteTodo(${todo.id})">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function showError(message, isModal = false) {
+            const errorElement = document.getElementById(isModal ? 'modalError' : 'errorMessage');
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+            setTimeout(() => {
+                errorElement.style.display = 'none';
+            }, 5000);
+        }
+
+        function escapeHtml(unsafe) {
+            return unsafe
+                .replace(/&/g, "&")
+                .replace(/</g, "<")
+                .replace(/>/g, ">")
+                .replace(/"/g, """)
+                .replace(/'/g, "'");
+        }
+
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString();
+        }
+
+        async function addTodo(todo) {
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(todo)
+                });
+                if (!response.ok) throw new Error('Failed to add todo');
+                const result = await response.json();
+                fetchTodos();
+            } catch (error) {
+                showError('Failed to add todo. Please try again.', true);
+                console.error('Error adding todo:', error);
+            }
+        }
+
+        async function toggleStatus(id) {
+            try {
+                const response = await fetch(`${apiUrl}?id=${id}`, {
+                    method: 'PATCH'
+                });
+                if (!response.ok) throw new Error('Failed to update todo status');
+                await response.json();
+                fetchTodos();
+            } catch (error) {
+                showError('Failed to update todo status. Please try again.');
+                console.error('Error toggling status:', error);
+            }
+        }
+
+        async function deleteTodo(id) {
+            if (!confirm('Are you sure you want to delete this todo?')) return;
+            
+            try {
+                const response = await fetch(`${apiUrl}?id=${id}`, {
+                    method: 'DELETE'
+                });
+                if (!response.ok) throw new Error('Failed to delete todo');
+                await response.json();
+                fetchTodos();
+            } catch (error) {
+                showError('Failed to delete todo. Please try again.');
+                console.error('Error deleting todo:', error);
+            }
+        }
+
+        function openModal() {
+            document.getElementById('todoModal').style.display = 'flex';
+            document.getElementById('modalError').style.display = 'none';
+            // Reset form
+            document.getElementById('title').value = '';
+            document.getElementById('description').value = '';
+            document.getElementById('priority').value = '';
+            document.getElementById('dueDate').value = '';
+        }
+
+        function closeModal() {
+            document.getElementById('todoModal').style.display = 'none';
+        }
+
+        function submitTodo() {
+            const title = document.getElementById('title').value.trim();
+            const description = document.getElementById('description').value.trim();
+            const priority = document.getElementById('priority').value.trim();
+            const dueDate = document.getElementById('dueDate').value;
+
+            if (!title || !description || !priority || !dueDate) {
+                showError('Please fill in all fields', true);
+                return;
+            }
+
+            const todo = {
+                title,
+                description,
+                priority,
+                dueDate,
+                completed: false
+            };
+            addTodo(todo);
+            closeModal();
+        }
+
+        window.onload = fetchTodos;
+    </script>
+</body>
+</html>
