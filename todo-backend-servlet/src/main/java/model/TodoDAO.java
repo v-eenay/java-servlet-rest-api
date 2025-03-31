@@ -115,4 +115,10 @@ public class TodoDAO {
         }
         return false;
     }
+
+    public static void main(String[] args) {
+        Todo todo = new Todo("This is a title","This is a description","High",Date.valueOf("2025-04-01"),false);
+       boolean added = TodoDAO.addTodo(todo);
+       System.out.println(added);
+    }
 }

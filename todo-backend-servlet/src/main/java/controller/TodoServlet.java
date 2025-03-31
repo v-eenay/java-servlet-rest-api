@@ -3,13 +3,10 @@ package controller;
 import model.Todo;
 import model.TodoDAO;
 import com.google.gson.Gson;
-
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
-
 import java.io.*;
-import java.sql.Date;
 import java.util.List;
 
 @WebServlet("/api/todos")
@@ -17,9 +14,20 @@ public class TodoServlet extends HttpServlet {
 
     private static final Gson gson = new Gson();
 
-    // GET: Fetch all todos
+    @Override
+    protected void doOptions(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+        response.setStatus(HttpServletResponse.SC_OK);
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+        response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
         List<Todo> todos = TodoDAO.getAllTodos();
         String jsonResponse = gson.toJson(todos);
 
@@ -27,12 +35,13 @@ public class TodoServlet extends HttpServlet {
         response.getWriter().write(jsonResponse);
     }
 
-    // POST: Add a new todo
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+        response.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-        // Get the todo data from request body
+        request.setCharacterEncoding("UTF-8");
         Todo todo = gson.fromJson(request.getReader(), Todo.class);
 
         boolean success = TodoDAO.addTodo(todo);
@@ -45,12 +54,13 @@ public class TodoServlet extends HttpServlet {
         }
     }
 
-    // PUT: Update an existing todo
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+        response.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-        // Get the todo data from request body
+        request.setCharacterEncoding("UTF-8");
         Todo todo = gson.fromJson(request.getReader(), Todo.class);
 
         boolean success = TodoDAO.updateTodo(todo);
@@ -63,9 +73,12 @@ public class TodoServlet extends HttpServlet {
         }
     }
 
-    // DELETE: Delete a todo by ID
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+        response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
         int id = Integer.parseInt(request.getParameter("id"));
 
         boolean success = TodoDAO.deleteTodo(id);
@@ -78,9 +91,12 @@ public class TodoServlet extends HttpServlet {
         }
     }
 
-    // PATCH: Toggle the completion status of a todo
     @Override
     protected void doPatch(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+        response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
         int id = Integer.parseInt(request.getParameter("id"));
 
         boolean success = TodoDAO.toggleStatus(id);
